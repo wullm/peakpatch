@@ -40,7 +40,7 @@ struct strooklat {
 
     struct lookup {
         /* A lookup table for faster searches */
-        double *lookup_table;
+        int *lookup_table;
         /* Size of the lookup table */
         int lookup_table_size;
     } lookup;
@@ -78,7 +78,7 @@ static inline int init_strooklat_spline(struct strooklat *spline,
     spline->last_index = 0;
 
     /* Allocate the lookup table */
-    spline->lookup.lookup_table = malloc(lookup_size * sizeof(double));
+    spline->lookup.lookup_table = malloc(lookup_size * sizeof(int));
     spline->lookup.lookup_table_size = lookup_size;
 
     if (spline->lookup.lookup_table == NULL) {
@@ -102,7 +102,11 @@ static inline int init_strooklat_spline(struct strooklat *spline,
             ;
 
         /* Store the index */
-        spline->lookup.lookup_table[i] = j - 1;
+        if (j == 0) {
+            spline->lookup.lookup_table[i] = 0;
+        } else {
+            spline->lookup.lookup_table[i] = j - 1;
+        }
     }
 
     return 0;
