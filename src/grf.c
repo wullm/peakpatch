@@ -48,8 +48,9 @@ int generate_complex_grf(fftw_complex *fbox, int N, double boxlen,
                 if (k > 0) {
                     double a = sampleNorm(state);
                     double b = sampleNorm(state);
-                    double norm = sqrt(a*a + b*b);
-                    fbox[row_major_half(x, y, z, N)] = -sqrt(2)*(a + b * I)/norm * factor;
+                    double norm = sqrt(a * a + b * b);
+                    fbox[row_major_half(x, y, z, N)] =
+                        -sqrt(2) * (a + b * I) / norm * factor;
                 } else {
                     fbox[row_major_half(x, y, z, N)] = 0;
                 }
