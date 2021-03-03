@@ -221,6 +221,12 @@ for i in range(nz):
 Omega_21 = -1.5 * Omvec / fvec**2
 Omega_22 = (2 + Hdot_over_H2 + df_dlogD)/fvec
 
+OmH2_vec = Hvec**2 * Omvec
+
+#Compute derivative
+adot_vec = Hvec * avec
+addot_vec = np.gradient(adot_vec) / np.gradient(tvec)
+
 # #Replace redshifts with transformed growth factors
 # zvec = 1./Dvec - 1
 # D_f = np.interp(z_f, bg_z, bg_D)
@@ -236,6 +242,9 @@ print("aHf(z_f) = ", a_f * H_f * f_f, " (a,H,f) = " ,a_f, H_f, f_f)
 
 D_f = np.interp(z_f, bg_z, bg_D)
 D_i = np.interp(z_i, bg_z, bg_D)
+
+t_i = 3e-1
+t_f = 10
 
 # Dvec = 1./(1+zvec)
 # D_f = 1./(1+z_f)
@@ -255,15 +264,18 @@ c_nk = ctypes.c_int(nk);
 c_nz = ctypes.c_int(nz);
 c_N_SPT = ctypes.c_int(N_SPT);
 c_EdS_mode = ctypes.c_int(EdS_mode);
-c_D_i = ctypes.c_double(D_i);
-c_D_f = ctypes.c_double(D_f);
+c_t_i = ctypes.c_double(t_i);
+c_t_f = ctypes.c_double(t_f);
 c_k_cutoff = ctypes.c_double(k_cutoff);
 c_grid = ctypes.c_void_p(grid.ctypes.data);
 c_kvec = ctypes.c_void_p(kvec.ctypes.data);
 c_sqrtPvec = ctypes.c_void_p(sqrtPvec.ctypes.data);
-c_logDvec = ctypes.c_void_p(logDvec.ctypes.data);
-c_Omega_21 = ctypes.c_void_p(Omega_21.ctypes.data);
-c_Omega_22 = ctypes.c_void_p(Omega_22.ctypes.data);
+c_tvec = ctypes.c_void_p(tvec.ctypes.data);
+c_Dvec = ctypes.c_void_p(Dvec.ctypes.data);
+c_avec = ctypes.c_void_p(avec.ctypes.data);
+c_addot_vec = ctypes.c_void_p(addot_vec.ctypes.data);
+c_OmH2_vec = ctypes.c_void_p(OmH2_vec.ctypes.data);
+c_H_vec = ctypes.c_void_p(Hvec.ctypes.data);
 c_outdir = ctypes.c_char_p(output_dir.encode('utf-8'));
 
 #Store the cosmological background tables as text file
@@ -271,8 +283,8 @@ CosmoData = np.array([zvec, Dvec, Omega_21, Omega_22, Hvec, fvec])
 np.savetxt("CosmoData.txt", CosmoData.T, header="z D Omega_21 Omega_22 H f")
 
 #Run MeshPT
-lib.run_meshpt(c_N, c_L, c_grid, c_nk, c_kvec, c_sqrtPvec, c_nz, c_logDvec,
-               c_Omega_21, c_Omega_22, c_N_SPT, c_D_i, c_D_f, c_k_cutoff,
+lib.run_meshpt(c_N, c_L, c_grid, c_nk, c_kvec, c_sqrtPvec, c_nz, c_tvec, c_Dvec,
+               c_avec, c_addot_vec, c_OmH2_vec, c_H_vec, c_N_SPT, c_t_i, c_t_f, c_k_cutoff,
                c_outdir, c_EdS_mode)
 
 #Show a slice of the output density field
