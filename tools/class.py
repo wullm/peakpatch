@@ -103,7 +103,7 @@ N = 256
 #Physical dimensions of the box
 L = N * 1.0 / h
 #Cutoff scale for the primary grid (0 = no cutoff)
-k_cutoff = 0
+k_cutoff = 0.3
 
 #Initial and final (desired output) redshifts of the SPT calculation
 z_i = 9.5e13
@@ -243,8 +243,8 @@ print("aHf(z_f) = ", a_f * H_f * f_f, " (a,H,f) = " ,a_f, H_f, f_f)
 D_f = np.interp(z_f, bg_z, bg_D)
 D_i = np.interp(z_i, bg_z, bg_D)
 
-t_i = 3e-1
-t_f = 10
+t_i = 2e-2
+t_f = tvec[0]
 
 # Dvec = 1./(1+zvec)
 # D_f = 1./(1+z_f)
