@@ -86,6 +86,13 @@ static inline void kernel_gaussian_inv(struct kernel *the_kernel) {
     the_kernel->kern = exp(kR * kR);
 }
 
+static inline void kernel_real_tophat(struct kernel *the_kernel) {
+    double k = the_kernel->k;
+    double R = *((double *)the_kernel->params);
+    double z = k*R;
+    the_kernel->kern = (z == 0) ? 0 : 3 * (sin(z) - z * cos(z)) / (z * z * z);
+}
+
 static inline void kernel_inv_poisson(struct kernel *the_kernel) {
     double k = the_kernel->k;
     the_kernel->kern = (k > 0) ? -1.0 / (k * k) : 0.0;
